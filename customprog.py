@@ -1,6 +1,18 @@
 from __future__ import print_function
 
 
+class UnexpectedBranchingLabelException(Exception):
+    pass
+
+
+class InvalidRegisterNameException(Exception):
+    pass
+
+
+class OverflowConstantException(Exception):
+    pass
+
+
 class CustomProg:
     def __init__(self):
         self._listIns = []
@@ -26,7 +38,8 @@ class CustomProg:
         self._listIns.append(Label(s))
 
     def addInstructionBR(self, s, label):
-        assert s in ["", "nzp", "nz", "zp", "n", "p", "np", "z"]
+        if s not in ["", "nzp", "nz", "zp", "n", "p", "np", "z"]:
+            raise UnexpectedBranchingLabelException()
         self._listIns.append(Br(s, label))
 
     def addInstructionGOTO(self, label):
@@ -66,7 +79,8 @@ class CustomProg:
         return i >= 0 and i.bit_length() <= 5
 
     def _assertIsRegister(self, reg):
-        assert self._isRegister(reg)
+        if not self._isRegister(reg):
+            raise InvalidRegisterNameException()
 
     def _assertIsRegisterOrInt(self, reg):
         int_value = None
@@ -78,8 +92,11 @@ class CustomProg:
         elif reg.isdigit():
             int_value = int(reg)
 
-        assert (self._isRegister(reg) or
-                (int_value is not None and self._isRightSizedInt(int_value)))
+        if int_value is None:
+            self._assertIsRegister(reg)
+        else:
+            if not self._isRightSizedInt(int_value):
+                raise OverflowConstantException()
 
 
 class Show:
