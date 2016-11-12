@@ -155,6 +155,9 @@ class TestCase(unittest.TestCase):
             for j in range(5):
                 self._testIn('''x = %d ^ %d;''' % (i, j), i ** j)
 
+    def test_bonus_overflow(self):
+        self._testIn('''x = 1515;''', 1515)
+        self._testIn('''x = 3000;''', 3000)
 '''
 TODOs:
 
