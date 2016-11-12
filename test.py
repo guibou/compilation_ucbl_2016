@@ -45,7 +45,6 @@ class TestCase(unittest.TestCase):
             self._testIn('''a = !%d;''' % i, ~i)
 
     def test_complex_expr(self):
-        self._testIn('''x = 1515;''', 1515)
         self._testIn('''x = 5 + 3 - 10;''', -2)
         self._testIn('''x = -3 + 10;''', 7)
 
@@ -54,22 +53,22 @@ class TestCase(unittest.TestCase):
         self._testIn('''x = (-3 - 2) + 10;''', 5)
 
     def test_affectation(self):
-        for i in range(100):
-            self._testIn('''a = %d; b = a + 100;''' % i, 100 + i)
-            self._testIn('''a = %d; b = a + 100; c = !b;
-            d = c - 2;''' % i, ~(i + 100) - 2)
+        for i in range(15):
+            self._testIn('''a = %d; b = a + 13;''' % i, 13 + i)
+            self._testIn('''a = %d; b = a + 13; c = !b;
+            d = c - 2;''' % i, ~(i + 13) - 2)
 
     def _test_simple_if(self, op, strop):
         for i in range(0, 15):
             for j in range(0, 15):
-                expectedValue = 10 + (100 if op(i, j) else 50)
+                expectedValue = 5 + (10 if op(i, j) else 20)
                 self._testIn('''
-                b = 50;
+                b = 20;
                 if(%d %s %d)
                 {
-                        b = 100;
+                        b = 10;
                 }
-                b = b + 10;
+                b = b + 5;
                 ''' % (i, strop, j), expectedValue)
 
     def test_if_lt(self):
