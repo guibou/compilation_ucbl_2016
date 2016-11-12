@@ -1,10 +1,18 @@
 import unittest
+import random
+import os
 
 from test_utils import run, InfiniteLoopException
 
 maxValue = 15
 
-rangeRandom = range
+if 'FAST' not in os.environ:
+    rangeRandom = range
+else:
+    def rangeRandom(*args):
+        r = range(*args)
+
+        return [random.choice(r)]
 
 class TestCase(unittest.TestCase):
     def _testIn(self, code, *needed):

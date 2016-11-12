@@ -3,6 +3,9 @@ This code is not interesing if you are not working with me on that course ;)
 
 See the file `test.py` for all tests.
 
+# Tips
+
+You can add the environment variable `FAST` to generate faster (but less exhaustives) tests.
 
 # Usage
 
