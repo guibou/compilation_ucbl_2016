@@ -40,7 +40,7 @@ class TestCase(unittest.TestCase):
         for i in range(maxValue):
                 self._testIn('''a = - %d;''' % i, -i)
 
-    def test_not(self):
+    def test_not_binary(self):
         for i in range(maxValue):
             self._testIn('''a = !%d;''' % i, ~i)
 
