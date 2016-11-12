@@ -125,6 +125,112 @@ class TestCase(unittest.TestCase):
     def test_if_else_neq(self):
         self._test_simple_if_else(lambda x, y: x != y, "!=")
 
+    # if chain without else
+    def _test_simple_if_chain(self, op, strop):
+        for i in range(0, 8):
+            for j in range(4, 10):
+                for k in range(6, 12):
+                    b = 5
+                    if op(i, j):
+                        b = 10
+                    elif op(i, k):
+                        b = 20
+                    elif op(j, k):
+                        b = 25
+                    b = b + 5
+
+                    expectedValue = b
+                    self._testIn('''
+                    b = 5;
+                    if({i} {op} {j})
+                    {{
+                            b = 10;
+                    }}
+                    else if({i} {op} {k})
+                    {{
+                            b = 20;
+                    }}
+                    else if({j} {op} {k})
+                    {{
+                            b = 25;
+                    }}
+                    b = b + 5;
+                    '''.format(i=i, op=strop, j=j, k=k), expectedValue)
+
+    def test_if_chain_lt(self):
+        self._test_simple_if_chain(lambda x, y: x < y, "<")
+
+    def test_if_chain_gt(self):
+        self._test_simple_if_chain(lambda x, y: x > y, ">")
+
+    def test_if_chain_leq(self):
+        self._test_simple_if_chain(lambda x, y: x <= y, "<=")
+
+    def test_if_chain_geq(self):
+        self._test_simple_if_chain(lambda x, y: x >= y, ">=")
+
+    def test_if_chain_eq(self):
+        self._test_simple_if_chain(lambda x, y: x == y, "==")
+
+    def test_if_chain_neq(self):
+        self._test_simple_if_chain(lambda x, y: x != y, "!=")
+
+    # if chain with else
+    def _test_simple_if_chain_else(self, op, strop):
+        for i in range(0, 8):
+            for j in range(4, 10):
+                for k in range(6, 12):
+                    b = 5
+                    if op(i, j):
+                        b = 10
+                    elif op(i, k):
+                        b = 20
+                    elif op(j, k):
+                        b = 25
+                    else:
+                        b = 15
+                    b = b + 5
+
+                    expectedValue = b
+                    self._testIn('''
+                    b = 5;
+                    if({i} {op} {j})
+                    {{
+                            b = 10;
+                    }}
+                    else if({i} {op} {k})
+                    {{
+                            b = 20;
+                    }}
+                    else if({j} {op} {k})
+                    {{
+                            b = 25;
+                    }}
+                    else
+                    {{
+                            b = 15;
+                    }}
+                    b = b + 5;
+                    '''.format(i=i, op=strop, j=j, k=k), expectedValue)
+
+    def test_if_chain_else_lt(self):
+        self._test_simple_if_chain_else(lambda x, y: x < y, "<")
+
+    def test_if_chain_else_gt(self):
+        self._test_simple_if_chain_else(lambda x, y: x > y, ">")
+
+    def test_if_chain_else_leq(self):
+        self._test_simple_if_chain_else(lambda x, y: x <= y, "<=")
+
+    def test_if_chain_else_geq(self):
+        self._test_simple_if_chain_else(lambda x, y: x >= y, ">=")
+
+    def test_if_chain_else_eq(self):
+        self._test_simple_if_chain_else(lambda x, y: x == y, "==")
+
+    def test_if_chain_else_neq(self):
+        self._test_simple_if_chain_else(lambda x, y: x != y, "!=")
+
     def _test_simple_while(self, op, strop):
         for i in range(0, 15):
             for j in range(0, 15):
