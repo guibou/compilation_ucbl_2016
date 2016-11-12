@@ -38,7 +38,9 @@ class CustomProg:
         self._listIns.append(Label(s))
 
     def addInstructionBR(self, s, label):
-        if s not in ["", "nzp", "nz", "zp", "n", "p", "np", "z"]:
+        s2 = frozenset(s)
+        if s2 not in [frozenset(), frozenset("nzp"), frozenset("nz"), frozenset("zp"),
+                      frozenset("n"), frozenset("p"), frozenset("np"), frozenset("z")]:
             raise UnexpectedBranchingLabelException()
         self._listIns.append(Br(s, label))
 
@@ -172,20 +174,21 @@ class Not(Show):
 
 class Br(Show):
     def __init__(self, s, label):
-        self.s = s
+        self.s = frozenset(s)
         self.label = label
 
     def visit(self, state):
-        ops = {"n": lambda x: x < 0,
-               "nz": lambda x: x <= 0,
-               "z": lambda x: x == 0,
-               "zp": lambda x: x >= 0,
-               "p": lambda x: x > 0,
-               "np": lambda x: x != 0}
+        ops = {frozenset("n"): lambda x: x < 0,
+               frozenset("nz"): lambda x: x <= 0,
+               frozenset("z"): lambda x: x == 0,
+               frozenset("zp"): lambda x: x >= 0,
+               frozenset("p"): lambda x: x > 0,
+               frozenset("np"): lambda x: x != 0}
 
         # do not read the last register if
         # the branch is unconditional
-        if self.s in {"", "nzp"} or ops[self.s](state.getLastRegister()):
+        if (self.s in {frozenset(), frozenset("nzp")} or
+           ops[self.s](state.getLastRegister())):
             return state.getPcAtLabel(self.label)
 
         return None
