@@ -58,6 +58,7 @@ class TestCase(unittest.TestCase):
             self._testIn('''a = %d; b = a + 13; c = !b;
             d = c - 2;''' % i, ~(i + 13) - 2)
 
+    # simple if
     def _test_simple_if(self, op, strop):
         for i in range(0, 15):
             for j in range(0, 15):
@@ -88,6 +89,41 @@ class TestCase(unittest.TestCase):
 
     def test_if_neq(self):
         self._test_simple_if(lambda x, y: x != y, "!=")
+
+    # if with else
+    def _test_simple_if_else(self, op, strop):
+        for i in range(0, 15):
+            for j in range(0, 15):
+                expectedValue = 5 + (10 if op(i, j) else 20)
+                self._testIn('''
+                if(%d %s %d)
+                {
+                        b = 10;
+                }
+                else
+                {
+                        b = 20;
+                }
+                b = b + 5;
+                ''' % (i, strop, j), expectedValue)
+
+    def test_if_else_lt(self):
+        self._test_simple_if_else(lambda x, y: x < y, "<")
+
+    def test_if_else_gt(self):
+        self._test_simple_if_else(lambda x, y: x > y, ">")
+
+    def test_if_else_leq(self):
+        self._test_simple_if_else(lambda x, y: x <= y, "<=")
+
+    def test_if_else_geq(self):
+        self._test_simple_if_else(lambda x, y: x >= y, ">=")
+
+    def test_if_else_eq(self):
+        self._test_simple_if_else(lambda x, y: x == y, "==")
+
+    def test_if_else_neq(self):
+        self._test_simple_if_else(lambda x, y: x != y, "!=")
 
     def _test_simple_while(self, op, strop):
         for i in range(0, 15):
