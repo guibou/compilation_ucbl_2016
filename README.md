@@ -7,6 +7,10 @@ See the file `test.py` for all tests.
 
 You can add the environment variable `FAST` to generate faster (but less exhaustives) tests.
 
+- no `FAST` : exhaustives tests, can be slow (2 minutes on my computer)
+- `FAST=1` : one case per testcase, quick (<1s), but not exhaustive
+- `FAST=10` : quick (2s), only 10 cases per testcase, but usually enough
+
 # Usage
 
 
@@ -69,7 +73,7 @@ Label(label='l_while_end_1')
 Runs the test for one student :
 
 ```shell
-$ PYTHONPATH=../MIF08_TP4/StudFilesTP4 python2 -m unittest test
+$ FAST=10 PYTHONPATH=../MIF08_TP4/StudFilesTP4 python2 -m unittest test
 ..........................
 ----------------------------------------------------------------------
 Ran 26 tests in 11.285s
