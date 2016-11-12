@@ -1,5 +1,4 @@
 from __future__ import print_function
-import random
 
 
 class CustomProg:
@@ -27,18 +26,30 @@ class CustomProg:
         self._listIns.append(Label(s))
 
     def addInstructionBR(self, s, label):
+        assert s in ["", "nzp", "nz", "zp", "n", "p", "np", "z"]
         self._listIns.append(Br(s, label))
 
     def addInstructionGOTO(self, label):
         self._listIns.append(Br("", label))
 
     def addInstructionNOT(self, dr, sr1):
+        self._assertIsRegister(dr)
+        self._assertIsRegister(sr1)
+
         self._listIns.append(Not(dr, sr1))
 
     def addInstructionADD(self, dr, sr1, sr2orimm7):
+        self._assertIsRegister(dr)
+        self._assertIsRegister(sr1)
+        self._assertIsRegisterOrInt(sr2orimm7)
+
         self._listIns.append(Add(dr, sr1, sr2orimm7))
 
     def addInstructionAND(self, dr, sr1, sr2orimm7):
+        self._assertIsRegister(dr)
+        self._assertIsRegister(sr1)
+        self._assertIsRegisterOrInt(sr2orimm7)
+
         self._listIns.append(And(dr, sr1, sr2orimm7))
 
     def printCode(self, filename):
@@ -47,11 +58,35 @@ class CustomProg:
     def addComment(self, s):
         pass
 
+    def _isRegister(self, reg):
+        return (isinstance(reg, str) and
+                reg.startswith("temp_") and reg[5:].isdigit())
+
+    def _isRightSizedInt(self, i):
+        return i >= 0 and i.bit_length() <= 5
+
+    def _assertIsRegister(self, reg):
+        assert self._isRegister(reg)
+
+    def _assertIsRegisterOrInt(self, reg):
+        int_value = None
+
+        if isinstance(reg, int):
+            int_value = reg
+        elif reg.startswith("#") and reg[1:].isdigit():
+            int_value = int(reg[1:])
+        elif reg.isdigit():
+            int_value = int(reg)
+
+        assert (self._isRegister(reg) or
+                (int_value is not None and self._isRightSizedInt(int_value)))
+
 
 class Show:
     def __repr__(self):
         def formatdict(d):
-            return ', '.join(("%s=%r" % (key, val)) for key, val in d.items())
+            return ', '.join(("%s=%r" % (key, val))
+                             for key, val in sorted(d.items()))
 
         return "{}({})".format(self.__class__.__name__,
                                formatdict(self.__dict__))
@@ -152,7 +187,7 @@ class NotInitialisedRegisterException(Exception):
 
 
 class State:
-    def __init__(self, instrs, maxInstructions=100000):
+    def __init__(self, instrs, maxInstructions=1000):
         self.instrs = instrs
         self.maxInstructions = maxInstructions
 
@@ -188,12 +223,16 @@ class State:
     def getRegisterOrInt(self, roi):
         if isinstance(roi, int):
             return roi
+        # special case for int starting with '#'
+        elif roi.startswith('#'):
+            return int(roi[1:].strip())
         else:
-            # special case for int starting with '#'
-            if roi.startswith('#'):
-                return int(roi[1:].strip())
-
-            return self.getRegister(roi)
+            # special case for int passed as string
+            try:
+                i = int(roi)
+                return i
+            except ValueError:
+                return self.getRegister(roi)
 
     def run(self):
         count = 0
@@ -259,6 +298,11 @@ if __name__ == '__main__':
                         Add(r0, r0, "#5")],
                        {r0: 5})
 
+        def test_add_cste_alt_bis(self):
+            self._test([And(r0, r0, 0),
+                        Add(r0, r0, "5")],
+                       {r0: 5})
+
         def test_add_registers(self):
             self._test([And(r0, r0, 0),
                         And(r1, r1, 0),
@@ -311,7 +355,7 @@ if __name__ == '__main__':
 
         def test_lr_and_constant(self):
             self._testLastRegister(8, [And(r0, r0, 0),
-                                       Add(r0, r0, 12),
+                                       Add(r0, r0, "12"),
                                        And(r0, r0, 10)])
 
         def test_lr_not(self):
