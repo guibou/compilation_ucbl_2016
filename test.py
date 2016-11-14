@@ -153,6 +153,21 @@ class TestCase(unittest.TestCase):
             b = b + 5;
             ''' % (i, strop, j), expectedValue)
 
+    def _test_simple_if_var(self, op, strop):
+        for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
+            # test with a variable
+            expectedValue = 5 + (10 if op(i, j) else 20)
+            self._testIn('''
+            b = 20;
+            op = %d %s %d;
+            c = false;
+            if(op)
+            {
+                    b = 10;
+            }
+            b = b + 5;
+            ''' % (i, strop, j), expectedValue)
+
     def test_if_lt(self):
         self._test_simple_if(lambda x, y: x < y, "<")
 
@@ -171,12 +186,46 @@ class TestCase(unittest.TestCase):
     def test_if_neq(self):
         self._test_simple_if(lambda x, y: x != y, "!=")
 
+    def test_if_lt_var(self):
+        self._test_simple_if(lambda x, y: x < y, "<")
+
+    def test_if_gt_var(self):
+        self._test_simple_if(lambda x, y: x > y, ">")
+
+    def test_if_leq_var(self):
+        self._test_simple_if(lambda x, y: x <= y, "<=")
+
+    def test_if_geq_var(self):
+        self._test_simple_if(lambda x, y: x >= y, ">=")
+
+    def test_if_eq_var(self):
+        self._test_simple_if(lambda x, y: x == y, "==")
+
+    def test_if_neq_var(self):
+        self._test_simple_if(lambda x, y: x != y, "!=")
+
     # if with else
     def _test_simple_if_else(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
             expectedValue = 5 + (10 if op(i, j) else 20)
             self._testIn('''
             if(%d %s %d)
+            {
+                    b = 10;
+            }
+            else
+            {
+                    b = 20;
+            }
+            b = b + 5;
+            ''' % (i, strop, j), expectedValue)
+
+    def _test_simple_if_else_var(self, op, strop):
+        for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
+            expectedValue = 5 + (10 if op(i, j) else 20)
+            self._testIn('''
+            v = %d %s %d;
+            if(v)
             {
                     b = 10;
             }
@@ -203,6 +252,24 @@ class TestCase(unittest.TestCase):
         self._test_simple_if_else(lambda x, y: x == y, "==")
 
     def test_if_else_neq(self):
+        self._test_simple_if_else(lambda x, y: x != y, "!=")
+
+    def test_if_else_lt_var(self):
+        self._test_simple_if_else(lambda x, y: x < y, "<")
+
+    def test_if_else_gt_var(self):
+        self._test_simple_if_else(lambda x, y: x > y, ">")
+
+    def test_if_else_leq_var(self):
+        self._test_simple_if_else(lambda x, y: x <= y, "<=")
+
+    def test_if_else_geq_var(self):
+        self._test_simple_if_else(lambda x, y: x >= y, ">=")
+
+    def test_if_else_eq_var(self):
+        self._test_simple_if_else(lambda x, y: x == y, "==")
+
+    def test_if_else_neq_var(self):
         self._test_simple_if_else(lambda x, y: x != y, "!=")
 
     # if chain without else
@@ -235,6 +302,39 @@ class TestCase(unittest.TestCase):
             b = b + 5;
             '''.format(i=i, op=strop, j=j, k=k), expectedValue)
 
+    def _test_simple_if_chain(self, op, strop):
+        for i, j, k in rangeGroup([(0, 8), (4, 10), (6, 12)]):
+            b = 5
+            if op(i, j):
+                b = 10
+            elif op(i, k):
+                b = 20
+            elif op(j, k):
+                b = 25
+            b = b + 5
+
+            expectedValue = b
+            self._testIn('''
+            b = 5;
+
+            var1 = {i} {op} {j};
+            var2 = {i} {op} {k};
+            var3 = {j} {op} {k};
+            if(var1)
+            {{
+                    b = 10;
+            }}
+            else if(var2)
+            {{
+                    b = 20;
+            }}
+            else if(var3)
+            {{
+                    b = 25;
+            }}
+            b = b + 5;
+            '''.format(i=i, op=strop, j=j, k=k), expectedValue)
+
     def test_if_chain_lt(self):
         self._test_simple_if_chain(lambda x, y: x < y, "<")
 
@@ -251,6 +351,24 @@ class TestCase(unittest.TestCase):
         self._test_simple_if_chain(lambda x, y: x == y, "==")
 
     def test_if_chain_neq(self):
+        self._test_simple_if_chain(lambda x, y: x != y, "!=")
+
+    def test_if_chain_lt_var(self):
+        self._test_simple_if_chain(lambda x, y: x < y, "<")
+
+    def test_if_chain_gt_var(self):
+        self._test_simple_if_chain(lambda x, y: x > y, ">")
+
+    def test_if_chain_leq_var(self):
+        self._test_simple_if_chain(lambda x, y: x <= y, "<=")
+
+    def test_if_chain_geq_var(self):
+        self._test_simple_if_chain(lambda x, y: x >= y, ">=")
+
+    def test_if_chain_eq_var(self):
+        self._test_simple_if_chain(lambda x, y: x == y, "==")
+
+    def test_if_chain_neq_var(self):
         self._test_simple_if_chain(lambda x, y: x != y, "!=")
 
     # if chain with else
@@ -289,6 +407,44 @@ class TestCase(unittest.TestCase):
             b = b + 5;
             '''.format(i=i, op=strop, j=j, k=k), expectedValue)
 
+    def _test_simple_if_chain_else_var(self, op, strop):
+        for i, j, k in rangeGroup([(0, 8), (4, 10), (6, 12)]):
+            b = 5
+            if op(i, j):
+                b = 10
+            elif op(i, k):
+                b = 20
+            elif op(j, k):
+                b = 25
+            else:
+                b = 15
+            b = b + 5
+
+            expectedValue = b
+            self._testIn('''
+            b = 5;
+            var1 = {i} {op} {j};
+            var2 = {i} {op} {k};
+            var3 = {j} {op} {k};
+            if(var1)
+            {{
+                    b = 10;
+            }}
+            else if(var2)
+            {{
+                    b = 20;
+            }}
+            else if(var3)
+            {{
+                    b = 25;
+            }}
+            else
+            {{
+                    b = 15;
+            }}
+            b = b + 5;
+            '''.format(i=i, op=strop, j=j, k=k), expectedValue)
+
     def test_if_chain_else_lt(self):
         self._test_simple_if_chain_else(lambda x, y: x < y, "<")
 
@@ -307,12 +463,48 @@ class TestCase(unittest.TestCase):
     def test_if_chain_else_neq(self):
         self._test_simple_if_chain_else(lambda x, y: x != y, "!=")
 
+    def test_if_chain_else_lt_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x < y, "<")
+
+    def test_if_chain_else_gt_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x > y, ">")
+
+    def test_if_chain_else_leq_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x <= y, "<=")
+
+    def test_if_chain_else_geq_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x >= y, ">=")
+
+    def test_if_chain_else_eq_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x == y, "==")
+
+    def test_if_chain_else_neq_var(self):
+        self._test_simple_if_chain_else(lambda x, y: x != y, "!=")
+
     def _test_simple_while(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
             infiniteLoop = op(i, j)
 
             code = '''
             while(%d %s %d)
+            {
+            }
+            res = 10 + 5;
+            ''' % (i, strop, j)
+
+            if infiniteLoop:
+                with self.assertRaises(InfiniteLoopException):
+                    run(code).run()
+            else:
+                self._testIn(code, 15)
+
+    def _test_simple_while_var(self, op, strop):
+        for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
+            infiniteLoop = op(i, j)
+
+            code = '''
+            var = %d %s %d;
+            while(var)
             {
             }
             res = 10 + 5;
@@ -340,6 +532,24 @@ class TestCase(unittest.TestCase):
         self._test_simple_while(lambda x, y: x == y, "==")
 
     def test_while_neq(self):
+        self._test_simple_while(lambda x, y: x != y, "!=")
+
+    def test_while_lt_var(self):
+        self._test_simple_while(lambda x, y: x < y, "<")
+
+    def test_while_gt_var(self):
+        self._test_simple_while(lambda x, y: x > y, ">")
+
+    def test_while_leq_var(self):
+        self._test_simple_while(lambda x, y: x <= y, "<=")
+
+    def test_while_geq_var(self):
+        self._test_simple_while(lambda x, y: x >= y, ">=")
+
+    def test_while_eq_var(self):
+        self._test_simple_while(lambda x, y: x == y, "==")
+
+    def test_while_neq_var(self):
         self._test_simple_while(lambda x, y: x != y, "!=")
 
     def test_and_binary(self):
