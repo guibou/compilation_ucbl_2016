@@ -21,20 +21,19 @@ def run(inputname, debug=False):
     output_name = hd + ".asm"
 
     # Codegen Visitor, first argument is debug mode
-    visitor3 = MyMuCodeGenVisitor(debug, output_name, parser)
+    visitor3 = MyMuCodeGenVisitor(True, output_name, parser)
 
     # mock the visitor
     prog = CustomProg()
     visitor3._prog = prog
     # parser is there to provide basic PP for expressions.
 
-    if not debug:
-        backstdout = sys.stdout
-        sys.stdout = cStringIO.StringIO()
+    backstdout = sys.stdout
+    sys.stdout = cStringIO.StringIO()
 
-    visitor3.visit(tree)
-
-    if not debug:
+    try:
+        visitor3.visit(tree)
+    finally:
         sys.stdout = backstdout
 
     instrs = prog._listIns
