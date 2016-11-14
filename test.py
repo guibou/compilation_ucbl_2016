@@ -307,6 +307,48 @@ class TestCase(unittest.TestCase):
     def test_bonus_overflow(self):
         self._testIn('''x = 1515;''', 1515)
         self._testIn('''x = 3000;''', 3000)
+
+    # test the boolean version of not / and / or
+    def test_not_boolean(self):
+        for a in ["true", "false"]:
+            self._testIn('''
+            a = %s;
+            b = 3;
+            if(!a)
+            {
+                b = 5;
+            }
+
+            c = b + 3;
+            ''' % a, 6 if a == "true" else 8)
+
+    def test_and_boolean(self):
+        for a in ["true", "false"]:
+            for b in ["true", "false"]:
+                self._testIn('''
+                a = %s;
+                c = %s;
+                b = 3;
+                if(a && c)
+                {
+                    b = 5;
+                }
+                c = b + 3;
+                ''' % (a, b), 8 if (a == "true" and b == "true") else 6)
+
+    def test_or_boolean(self):
+        for a in ["true", "false"]:
+            for b in ["true", "false"]:
+                self._testIn('''
+                a = %s;
+                c = %s;
+                b = 3;
+                if(a || c)
+                {
+                    b = 5;
+                }
+                c = b + 3;
+                ''' % (a, b), 8 if (a == "true" or b == "true") else 6)
 '''
 TODOs:
 
