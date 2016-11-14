@@ -77,8 +77,6 @@ class TestCase(unittest.TestCase):
     def test_affectation(self):
         for i in rangeGroup([(0, maxValue)]):
             self._testIn('''a = %d; b = a + 13;''' % i, 13 + i)
-            self._testIn('''a = %d; b = a + 13; c = !b;
-            d = c - 2;''' % i, ~(i + 13) - 2)
 
     # simple if
     def _test_simple_if(self, op, strop):
