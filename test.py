@@ -30,6 +30,11 @@ if 'FAST' in os.environ:
 
 
 class TestCase(unittest.TestCase):
+    def _testRun(self, code, *needed):
+        state = run(code)
+
+        state.run()
+
     def _testIn(self, code, *needed):
         state = run(code)
 
@@ -77,6 +82,63 @@ class TestCase(unittest.TestCase):
     def test_affectation(self):
         for i in rangeGroup([(0, maxValue)]):
             self._testIn('''a = %d; b = a + 13;''' % i, 13 + i)
+
+    def _test_run_affectation_op(self, op):
+        self._testRun('''a = 1 %s 2''' % op)
+
+    def test_run_affectation_add(self):
+        self._test_run_affectation_op("+")
+
+    def test_run_affectation_sub(self):
+        self._test_run_affectation_op("-")
+
+    def test_run_affectation_div(self):
+        self._test_run_affectation_op("/")
+
+    def test_run_affectation_mul(self):
+        self._test_run_affectation_op("*")
+
+    def test_run_affectation_mod(self):
+        self._test_run_affectation_op("%")
+
+    def test_run_affectation_and_binary(self):
+        self._test_run_affectation_op("&&")
+
+    def test_run_affectation_or_binary(self):
+        self._test_run_affectation_op("||")
+
+    def _test_run_affectation_binop_bool(self, op):
+        self._testRun('''a = true %s false''' % op)
+
+    def test_run_affectation_and_bool(self):
+        self._test_run_affectation_binop_bool("&&")
+
+    def test_run_affectation_or_bool(self):
+        self._test_run_affectation_binop_bool("||")
+
+    def test_run_affectation_lt(self):
+        self._test_run_affectation_op("<")
+
+    def test_run_affectation_gt(self):
+        self._test_run_affectation_op(">")
+
+    def test_run_affectation_lte(self):
+        self._test_run_affectation_op("<=")
+
+    def test_run_affectation_gte(self):
+        self._test_run_affectation_op(">=")
+
+    def test_run_affectation_eq(self):
+        self._test_run_affectation_op("==")
+
+    def test_run_affectation_neq(self):
+        self._test_run_affectation_op("!=")
+
+    def test_run_affectation_not_binary(self):
+        self._testIn('''a = !5''')
+
+    def test_run_affectation_not_boolean(self):
+        self._testIn('''a = !true''')
 
     # simple if
     def _test_simple_if(self, op, strop):
