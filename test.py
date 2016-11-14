@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import unittest
 import random
 import os
@@ -734,3 +736,34 @@ class TestCase(unittest.TestCase):
         '''
 
         self._testIn(code, 5040)
+
+if __name__ == '__main__':
+    import csv
+
+    result = unittest.main(exit=False).result
+
+    errTests = {}
+    for item in (result.failures + result.errors):
+        errTests[item[0].id().split('.')[-1]] = 'Exception: Not Yet Implemented' in item[1]
+
+    tests = []
+    for test in dir(TestCase):
+        if test.startswith("test_"):
+            tests.append(test)
+
+    tests.sort()
+
+    with open('result.csv', 'w') as f:
+        writer = csv.writer(f)
+
+        for test in tests:
+            label = ''
+            if test in errTests:
+                if errTests[test]:
+                    label = "Not Implemented"
+                else:
+                    label = "Bug"
+            else:
+                label = "Ok"
+
+            writer.writerow([test, label])
