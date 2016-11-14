@@ -1,6 +1,5 @@
 This code is not interesing if you are not working with me on that course ;)
 
-
 See the file `test.py` for all tests.
 
 # Tips
@@ -80,3 +79,5 @@ Ran 26 tests in 11.285s
 
 OK
 ```
+
+results are stored inside 'result.csv'
