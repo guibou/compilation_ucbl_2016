@@ -411,9 +411,74 @@ class TestCase(unittest.TestCase):
                 }
                 c = b + 3;
                 ''' % (a, b), 8 if (a == "true" or b == "true") else 6)
-'''
-TODOs:
 
-- If
-- register imutability
-'''
+    def test_non_mutable_not_binary(self):
+        self._testIn('''
+        a = 5;
+        c = !a;
+        d = a + 14;
+        ''', 19)
+
+    def test_non_mutable_not_boolean(self):
+        self._testIn('''
+        a = true;
+        c = !a;
+        if(a)
+        {
+           d = 12;
+        }
+        ''', 12)
+
+    def _test_non_mutable_op(self, op):
+        self._testIn('''
+        a = 5;
+        b = 3;
+        c = a %s b;
+        d = a + 14;
+        ''' % op, 19)
+
+        self._testIn('''
+        a = 5;
+        b = 3;
+        c = a %s b;
+        d = b + 14;
+        ''' % op, 17)
+
+    def test_non_mutable_add(self):
+        self._test_non_mutable_op("+")
+
+    def test_non_mutable_sub(self):
+        self._test_non_mutable_op("-")
+
+    def test_non_mutable_div(self):
+        self._test_non_mutable_op("/")
+
+    def test_non_mutable_mul(self):
+        self._test_non_mutable_op("*")
+
+    def test_non_mutable_mod(self):
+        self._test_non_mutable_op("%")
+
+    def test_non_mutable_and_binary(self):
+        self._test_non_mutable_op("&&")
+
+    def test_non_mutable_or_binary(self):
+        self._test_non_mutable_op("||")
+
+    def test_non_mutable_lt(self):
+        self._test_non_mutable_op("<")
+
+    def test_non_mutable_gt(self):
+        self._test_non_mutable_op(">")
+
+    def test_non_mutable_lte(self):
+        self._test_non_mutable_op("<=")
+
+    def test_non_mutable_gte(self):
+        self._test_non_mutable_op(">=")
+
+    def test_non_mutable_eq(self):
+        self._test_non_mutable_op("==")
+
+    def test_non_mutable_neq(self):
+        self._test_non_mutable_op("!=")
