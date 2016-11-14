@@ -84,7 +84,7 @@ class TestCase(unittest.TestCase):
             self._testIn('''a = %d; b = a + 13;''' % i, 13 + i)
 
     def _test_run_affectation_op(self, op):
-        self._testRun('''a = 1 %s 2''' % op)
+        self._testRun('''a = 1 %s 2;''' % op)
 
     def test_run_affectation_add(self):
         self._test_run_affectation_op("+")
@@ -108,7 +108,7 @@ class TestCase(unittest.TestCase):
         self._test_run_affectation_op("||")
 
     def _test_run_affectation_binop_bool(self, op):
-        self._testRun('''a = true %s false''' % op)
+        self._testRun('''a = true %s false;''' % op)
 
     def test_run_affectation_and_bool(self):
         self._test_run_affectation_binop_bool("&&")
@@ -135,10 +135,10 @@ class TestCase(unittest.TestCase):
         self._test_run_affectation_op("!=")
 
     def test_run_affectation_not_binary(self):
-        self._testIn('''a = !5''')
+        self._testRun('''a = !5;''')
 
     def test_run_affectation_not_boolean(self):
-        self._testIn('''a = !true''')
+        self._testRun('''a = !true;''')
 
     # simple if
     def _test_simple_if(self, op, strop):
