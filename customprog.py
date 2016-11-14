@@ -207,7 +207,7 @@ class NotInitialisedRegisterException(Exception):
 
 
 class State:
-    def __init__(self, instrs, maxInstructions=1000):
+    def __init__(self, instrs, maxInstructions=100000):
         self.instrs = instrs
         self.maxInstructions = maxInstructions
 

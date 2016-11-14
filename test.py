@@ -692,3 +692,45 @@ class TestCase(unittest.TestCase):
 
     def test_non_mutable_neq(self):
         self._test_non_mutable_op("!=")
+
+    def test_complex_program_multiplication(self):
+        code = '''
+        a  = 5;
+        b = 8;
+
+        acc = 0;
+
+        while(b > 0)
+        {
+            acc = acc + a;
+            b = b - 1;
+        }
+        '''
+
+        self._testIn(code, 40)
+
+    def test_complex_program_factorial(self):
+        code = '''
+        n = 7;
+        accum = 1;
+        while(n >= 2)
+        {
+            # multiplication
+            a  = n;
+            b = accum;
+
+            acc = 0;
+
+            test = 0 < b;
+            while(test)
+            {
+                acc = acc + a;
+                b = b + (-1);
+            }
+
+            accum = acc;
+            n = n - 1;
+        }
+        '''
+
+        self._testIn(code, 5040)
