@@ -206,6 +206,33 @@ class TestCase(unittest.TestCase):
     def test_if_neq_var(self):
         self._test_simple_if(lambda x, y: x != y, "!=")
 
+    def test_if_bool(self):
+        self._testIn('''
+        if(false)
+        {
+            x = 10;
+        }
+        else
+        {
+            x = 5;
+        }
+
+        x = x + 7;
+        ''', 12)
+
+        self._testIn('''
+        if(true)
+        {
+            x = 10;
+        }
+        else
+        {
+            x = 5;
+        }
+
+        x = x + 7;
+        ''', 17)
+
     # if with else
     def _test_simple_if_else(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
