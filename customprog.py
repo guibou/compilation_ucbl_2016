@@ -35,6 +35,19 @@ class NotInitialisedRegisterError(Exception):
 def isString(s):
     return isinstance(s, (str, unicode))
 
+def normalizeRegister(r):
+    # convert to string, this avoid the
+    # case where student are passing a python object convertible to string
+    r = str(r).strip()
+
+    if r.startswith('#'):
+        r = r[1:]
+
+    # try to convert to int
+    try:
+        return int(r)
+    except ValueError:
+        return r # as a string
 
 class CustomProg:
     def __init__(self):
@@ -86,24 +99,35 @@ class CustomProg:
         self._addInstr(Br("", label))
 
     def addInstructionNOT(self, dr, sr1):
+        dr = normalizeRegister(dr)
+        sr1 = normalizeRegister(sr1)
+
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
 
         self._addInstr(Not(dr, sr1))
 
     def addInstructionADD(self, dr, sr1, sr2orimm7):
+        dr = normalizeRegister(dr)
+        sr1 = normalizeRegister(sr1)
+        sr2orimm7 = normalizeRegister(sr2orimm7)
+
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
-        self._assertIsRegisterOrInt(str(sr2orimm7))
+        self._assertIsRegisterOrInt(sr2orimm7)
 
-        self._addInstr(Add(dr, sr1, str(sr2orimm7)))
+        self._addInstr(Add(dr, sr1, sr2orimm7))
 
     def addInstructionAND(self, dr, sr1, sr2orimm7):
+        dr = normalizeRegister(dr)
+        sr1 = normalizeRegister(sr1)
+        sr2orimm7 = normalizeRegister(sr2orimm7)
+
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
-        self._assertIsRegisterOrInt(str(sr2orimm7))
+        self._assertIsRegisterOrInt(sr2orimm7)
 
-        self._addInstr(And(dr, sr1, str(sr2orimm7)))
+        self._addInstr(And(dr, sr1, sr2orimm7))
 
     def printCode(self, filename):
         pass
@@ -262,23 +286,15 @@ class State:
 
     def getRegister(self, r):
         if r not in self.registers:
-            raise NotInitialisedRegisterError()
+            raise NotInitialisedRegisterError(r)
 
         return self.registers[r]
 
     def getRegisterOrInt(self, roi):
         if isinstance(roi, int):
             return roi
-        # special case for int starting with '#'
-        elif roi.startswith('#'):
-            return int(roi[1:].strip())
         else:
-            # special case for int passed as string
-            try:
-                i = int(roi)
-                return i
-            except ValueError:
-                return self.getRegister(roi)
+            return self.getRegister(roi)
 
     def run(self):
         count = 0
@@ -332,21 +348,21 @@ if __name__ == '__main__':
                        {r0: 5})
 
         def test_and_cste(self):
-            self._test([And(r0, r0, "#0"),
+            self._test([And(r0, r0, normalizeRegister("#0")),
                         And(r0, r0, 0),
                         Add(r0, r0, 7),
                         And(r1, r0, 4),
-                        And(r0, r0, "#3")],
+                        And(r0, r0, normalizeRegister("#3"))],
                        {r0: 3, r1: 4})
 
         def test_add_cste_alt(self):
             self._test([And(r0, r0, 0),
-                        Add(r0, r0, "#5")],
+                        Add(r0, r0, normalizeRegister("#5"))],
                        {r0: 5})
 
         def test_add_cste_alt_bis(self):
             self._test([And(r0, r0, 0),
-                        Add(r0, r0, "5")],
+                        Add(r0, r0, normalizeRegister("5"))],
                        {r0: 5})
 
         def test_add_registers(self):
@@ -401,7 +417,7 @@ if __name__ == '__main__':
 
         def test_lr_and_constant(self):
             self._testLastRegister(8, [And(r0, r0, 0),
-                                       Add(r0, r0, "12"),
+                                       Add(r0, r0, normalizeRegister("12")),
                                        And(r0, r0, 10)])
 
         def test_lr_not(self):
