@@ -145,9 +145,9 @@ class TestCase(unittest.TestCase):
     # simple if
     def _test_simple_if(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
-            expectedValue = 5 + (10 if op(i, j) else 20)
+            expectedValue = 5 + (10 if op(i, j) else 12)
             self._testIn('''
-            b = 20;
+            b = 12;
             if(%d %s %d)
             {
                     b = 10;
@@ -158,9 +158,9 @@ class TestCase(unittest.TestCase):
     def _test_simple_if_var(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
             # test with a variable
-            expectedValue = 5 + (10 if op(i, j) else 20)
+            expectedValue = 5 + (10 if op(i, j) else 12)
             self._testIn('''
-            b = 20;
+            b = 12;
             op = %d %s %d;
             c = false;
             if(op)
@@ -236,7 +236,7 @@ class TestCase(unittest.TestCase):
     # if with else
     def _test_simple_if_else(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
-            expectedValue = 5 + (10 if op(i, j) else 20)
+            expectedValue = 5 + (10 if op(i, j) else 12)
             self._testIn('''
             if(%d %s %d)
             {
@@ -244,14 +244,14 @@ class TestCase(unittest.TestCase):
             }
             else
             {
-                    b = 20;
+                    b = 12;
             }
             b = b + 5;
             ''' % (i, strop, j), expectedValue)
 
     def _test_simple_if_else_var(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
-            expectedValue = 5 + (10 if op(i, j) else 20)
+            expectedValue = 5 + (10 if op(i, j) else 12)
             self._testIn('''
             v = %d %s %d;
             if(v)
@@ -260,7 +260,7 @@ class TestCase(unittest.TestCase):
             }
             else
             {
-                    b = 20;
+                    b = 12;
             }
             b = b + 5;
             ''' % (i, strop, j), expectedValue)
@@ -308,9 +308,9 @@ class TestCase(unittest.TestCase):
             if op(i, j):
                 b = 10
             elif op(i, k):
-                b = 20
+                b = 12
             elif op(j, k):
-                b = 25
+                b = 15
             b = b + 5
 
             expectedValue = b
@@ -322,11 +322,11 @@ class TestCase(unittest.TestCase):
             }}
             else if({i} {op} {k})
             {{
-                    b = 20;
+                    b = 12;
             }}
             else if({j} {op} {k})
             {{
-                    b = 25;
+                    b = 15;
             }}
             b = b + 5;
             '''.format(i=i, op=strop, j=j, k=k), expectedValue)
@@ -337,9 +337,9 @@ class TestCase(unittest.TestCase):
             if op(i, j):
                 b = 10
             elif op(i, k):
-                b = 20
+                b = 12
             elif op(j, k):
-                b = 25
+                b = 15
             b = b + 5
 
             expectedValue = b
@@ -355,11 +355,11 @@ class TestCase(unittest.TestCase):
             }}
             else if(var2)
             {{
-                    b = 20;
+                    b = 12;
             }}
             else if(var3)
             {{
-                    b = 25;
+                    b = 15;
             }}
             b = b + 5;
             '''.format(i=i, op=strop, j=j, k=k), expectedValue)
@@ -407,9 +407,9 @@ class TestCase(unittest.TestCase):
             if op(i, j):
                 b = 10
             elif op(i, k):
-                b = 20
+                b = 12
             elif op(j, k):
-                b = 25
+                b = 8
             else:
                 b = 15
             b = b + 5
@@ -423,11 +423,11 @@ class TestCase(unittest.TestCase):
             }}
             else if({i} {op} {k})
             {{
-                    b = 20;
+                    b = 12;
             }}
             else if({j} {op} {k})
             {{
-                    b = 25;
+                    b = 8;
             }}
             else
             {{
@@ -442,9 +442,9 @@ class TestCase(unittest.TestCase):
             if op(i, j):
                 b = 10
             elif op(i, k):
-                b = 20
+                b = 12
             elif op(j, k):
-                b = 25
+                b = 8
             else:
                 b = 15
             b = b + 5
@@ -461,11 +461,11 @@ class TestCase(unittest.TestCase):
             }}
             else if(var2)
             {{
-                    b = 20;
+                    b = 12;
             }}
             else if(var3)
             {{
-                    b = 25;
+                    b = 8;
             }}
             else
             {{
