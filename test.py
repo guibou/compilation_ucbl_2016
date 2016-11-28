@@ -233,6 +233,21 @@ class TestCase(unittest.TestCase):
         x = x + 7;
         ''', 17)
 
+    def test_while_bool(self):
+        code = '''
+        while(true)
+        {
+        }'''
+
+        with self.assertRaises(InfiniteLoopError):
+            run(code).run()
+
+        self._testRun('''
+        while(false)
+        {
+        }
+        ''')
+
     # if with else
     def _test_simple_if_else(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
