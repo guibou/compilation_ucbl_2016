@@ -52,6 +52,12 @@ class CustomProg:
         return ("l_while_begin_"+str(self._nblabel),
                 "l_while_end_"+str(self._nblabel))
 
+    # Custom: for one student
+    def newlabelEQ(self):
+        self._nblabel = self._nblabel+1
+        return ("eq_neg_"+str(self._nblabel),
+                "eq_end_"+str(self._nblabel))
+
     def newlabelCond(self):
         self._nblabel = self._nblabel+1
         return ("l_cond_neg_"+str(self._nblabel),
