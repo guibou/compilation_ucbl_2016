@@ -9,6 +9,11 @@ from MuLexer import MuLexer
 from MuParser import MuParser
 from MyMuCodeGenVisitor import MyMuCodeGenVisitor
 
+import MyMuCodeGenVisitor as MyMuCodeGenVisitorModule
+
+# monkey patch
+MyMuCodeGenVisitorModule.LC3Prog = CustomProg
+
 
 def run(inputname, debug=False):
     input_s = InputStream(inputname)
