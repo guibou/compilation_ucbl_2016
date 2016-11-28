@@ -32,6 +32,10 @@ class MissingLabelError(Exception):
 class NotInitialisedRegisterError(Exception):
     pass
 
+def isString(s):
+    return isinstance(s, (str, unicode))
+
+
 class CustomProg:
     def __init__(self):
         self._listIns = []
@@ -53,38 +57,47 @@ class CustomProg:
         return ("l_cond_neg_"+str(self._nblabel),
                 "l_cond_end_"+str(self._nblabel))
 
+    def _addInstr(self, instr):
+        if len(self._listIns) > 100000:
+            raise TooMuchAsmError()
+        else:
+            self._listIns.append(instr)
+
     def addLabel(self, s):
-        self._listIns.append(Label(s))
+        if not isString(s):
+            raise NotStringLabelError(repr(s))
+
+        self._addInstr(Label(s))
 
     def addInstructionBR(self, s, label):
         s2 = frozenset(s)
         if s2 not in [frozenset(), frozenset("nzp"), frozenset("nz"), frozenset("zp"),
                       frozenset("n"), frozenset("p"), frozenset("np"), frozenset("z")]:
-            raise UnexpectedBranchingLabelException()
-        self._listIns.append(Br(s, label))
+            raise UnexpectedBranchingLabelError(repr(s))
+        self._addInstr(Br(s, label))
 
     def addInstructionGOTO(self, label):
-        self._listIns.append(Br("", label))
+        self._addInstr(Br("", label))
 
     def addInstructionNOT(self, dr, sr1):
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
 
-        self._listIns.append(Not(dr, sr1))
+        self._addInstr(Not(dr, sr1))
 
     def addInstructionADD(self, dr, sr1, sr2orimm7):
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
-        self._assertIsRegisterOrInt(sr2orimm7)
+        self._assertIsRegisterOrInt(str(sr2orimm7))
 
-        self._listIns.append(Add(dr, sr1, sr2orimm7))
+        self._addInstr(Add(dr, sr1, str(sr2orimm7)))
 
     def addInstructionAND(self, dr, sr1, sr2orimm7):
         self._assertIsRegister(dr)
         self._assertIsRegister(sr1)
-        self._assertIsRegisterOrInt(sr2orimm7)
+        self._assertIsRegisterOrInt(str(sr2orimm7))
 
-        self._listIns.append(And(dr, sr1, sr2orimm7))
+        self._addInstr(And(dr, sr1, str(sr2orimm7)))
 
     def printCode(self, filename):
         pass
@@ -93,11 +106,11 @@ class CustomProg:
         pass
 
     def _isRegister(self, reg):
-        return (isinstance(reg, str) and
+        return (isString(reg) and
                 reg.startswith("temp_") and reg[5:].isdigit())
 
     def _isRightSizedInt(self, i):
-        return i >= 0 and i.bit_length() <= 5
+        return -15 <= i <= 15
 
     def _assertIsRegister(self, reg):
         if not self._isRegister(reg):
@@ -108,9 +121,9 @@ class CustomProg:
 
         if isinstance(reg, int):
             int_value = reg
-        elif reg.startswith("#") and reg[1:].isdigit():
+        elif isString(reg) and reg.startswith("#") and reg[1:].isdigit():
             int_value = int(reg[1:])
-        elif reg.isdigit():
+        elif isString(reg) and reg.isdigit():
             int_value = int(reg)
 
         if int_value is None:
@@ -165,7 +178,7 @@ class And(Show):
             v1 = None
 
         if v0 is None or v1 is None:
-            if v0 == 0 or v1 == 0:
+            if v1 == 0:
                 state.setRegister(self.dr, 0)
             else:
                 raise NotInitialisedRegisterError()
