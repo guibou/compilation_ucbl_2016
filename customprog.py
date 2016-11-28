@@ -1,17 +1,36 @@
 from __future__ import print_function
 
 
-class UnexpectedBranchingLabelException(Exception):
+class UnexpectedBranchingLabelError(Exception):
     pass
 
 
-class InvalidRegisterNameException(Exception):
+class InvalidRegisterNameError(Exception):
     pass
 
 
-class OverflowConstantException(Exception):
+class OverflowConstantError(Exception):
     pass
 
+
+class TooMuchAsmError(Exception):
+    pass
+
+
+class NotStringLabelError(Exception):
+    pass
+
+
+class InfiniteLoopError(Exception):
+    pass
+
+
+class MissingLabelError(Exception):
+    pass
+
+
+class NotInitialisedRegisterError(Exception):
+    pass
 
 class CustomProg:
     def __init__(self):
@@ -82,7 +101,7 @@ class CustomProg:
 
     def _assertIsRegister(self, reg):
         if not self._isRegister(reg):
-            raise InvalidRegisterNameException()
+            raise InvalidRegisterNameError(repr(reg))
 
     def _assertIsRegisterOrInt(self, reg):
         int_value = None
@@ -98,7 +117,7 @@ class CustomProg:
             self._assertIsRegister(reg)
         else:
             if not self._isRightSizedInt(int_value):
-                raise OverflowConstantException()
+                raise OverflowConstantError(repr(int_value))
 
 
 class Show:
@@ -137,19 +156,19 @@ class And(Show):
     def visit(self, state):
         try:
             v0 = state.getRegister(self.sr1)
-        except NotInitialisedRegisterException:
+        except NotInitialisedRegisterError:
             v0 = None
 
         try:
             v1 = state.getRegisterOrInt(self.sr2orimm7)
-        except NotInitialisedRegisterException:
+        except NotInitialisedRegisterError:
             v1 = None
 
         if v0 is None or v1 is None:
             if v0 == 0 or v1 == 0:
                 state.setRegister(self.dr, 0)
             else:
-                raise NotInitialisedRegisterException()
+                raise NotInitialisedRegisterError()
 
         else:
             state.setRegister(self.dr, v0 & v1)
@@ -194,18 +213,6 @@ class Br(Show):
         return None
 
 
-class InfiniteLoopException(Exception):
-    pass
-
-
-class MissingLabelException(Exception):
-    pass
-
-
-class NotInitialisedRegisterException(Exception):
-    pass
-
-
 class State:
     def __init__(self, instrs, maxInstructions=100000):
         self.instrs = instrs
@@ -227,7 +234,7 @@ class State:
         if self.lastRegister is not None:
             return self.lastRegister
         else:
-            raise NotInitialisedRegisterException()
+            raise NotInitialisedRegisterError()
 
     def setRegister(self, r, value):
         self.registers[r] = value
@@ -236,7 +243,7 @@ class State:
 
     def getRegister(self, r):
         if r not in self.registers:
-            raise NotInitialisedRegisterException()
+            raise NotInitialisedRegisterError()
 
         return self.registers[r]
 
@@ -269,13 +276,13 @@ class State:
             count += 1
 
             if count > self.maxInstructions:
-                raise InfiniteLoopException()
+                raise InfiniteLoopError()
 
     def getPcAtLabel(self, label):
         try:
             return self.labels[label]
         except KeyError:
-            raise MissingLabelException(label)
+            raise MissingLabelError(label)
 
 if __name__ == '__main__':
     import unittest
@@ -420,43 +427,43 @@ if __name__ == '__main__':
             state = State([
                 Label("start"), Br("", "start")])
 
-            with self.assertRaises(InfiniteLoopException):
+            with self.assertRaises(InfiniteLoopError):
                 state.run()
 
         def test_missing_label(self):
             state = State([Br("", "missing")])
 
-            with self.assertRaises(MissingLabelException):
+            with self.assertRaises(MissingLabelError):
                 state.run()
 
         def test_notinitialised_register_not(self):
             state = State([Not(r0, r0)])
 
-            with self.assertRaises(NotInitialisedRegisterException):
+            with self.assertRaises(NotInitialisedRegisterError):
                 state.run()
 
         def test_notinitialised_register_and_first(self):
             state = State([And(r0, r0, 2)])
 
-            with self.assertRaises(NotInitialisedRegisterException):
+            with self.assertRaises(NotInitialisedRegisterError):
                 state.run()
 
         def test_notinitialised_register_and_second(self):
             state = State([And(r0, r0, 0), Add(r0, r0, 10), And(r0, r0, r1)])
 
-            with self.assertRaises(NotInitialisedRegisterException):
+            with self.assertRaises(NotInitialisedRegisterError):
                 state.run()
 
         def test_notinitialised_register_or_first(self):
             state = State([Add(r0, r0, 2)])
 
-            with self.assertRaises(NotInitialisedRegisterException):
+            with self.assertRaises(NotInitialisedRegisterError):
                 state.run()
 
         def test_notinitialised_register_or_second(self):
             state = State([And(r0, r0, 0), Add(r0, r0, r1)])
 
-            with self.assertRaises(NotInitialisedRegisterException):
+            with self.assertRaises(NotInitialisedRegisterError):
                 state.run()
 
     unittest.main()

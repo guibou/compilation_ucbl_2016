@@ -3,7 +3,7 @@ import os.path
 import cStringIO
 
 from antlr4 import CommonTokenStream, InputStream
-from customprog import CustomProg, State, InfiniteLoopException
+from customprog import CustomProg, State, InfiniteLoopError
 
 from MuLexer import MuLexer
 from MuParser import MuParser

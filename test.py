@@ -5,7 +5,7 @@ import random
 import os
 import itertools
 
-from test_utils import run, InfiniteLoopException
+from test_utils import run, InfiniteLoopError
 
 maxValue = 15
 
@@ -522,7 +522,7 @@ class TestCase(unittest.TestCase):
             ''' % (i, strop, j)
 
             if infiniteLoop:
-                with self.assertRaises(InfiniteLoopException):
+                with self.assertRaises(InfiniteLoopError):
                     run(code).run()
             else:
                 self._testIn(code, 15)
@@ -540,7 +540,7 @@ class TestCase(unittest.TestCase):
             ''' % (i, strop, j)
 
             if infiniteLoop:
-                with self.assertRaises(InfiniteLoopException):
+                with self.assertRaises(InfiniteLoopError):
                     run(code).run()
             else:
                 self._testIn(code, 15)
