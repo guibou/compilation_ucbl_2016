@@ -798,14 +798,24 @@ if __name__ == '__main__':
     with open('result.csv', 'w') as f:
         writer = csv.writer(f)
 
+        labels = []
+        totalOk = 0
+        totalNotImplemented = 0
+        totalBug = 0
         for test in tests:
             label = ''
             if test in errTests:
                 if errTests[test]:
+                    totalNotImplemented += 1
                     label = "Not Implemented"
                 else:
+                    totalBug += 1
                     label = "Bug"
             else:
+                totalOk += 1
                 label = "Ok"
 
-            writer.writerow([test, label])
+            labels.append(label)
+
+        writer.writerow(["TotalOk", "TotalNotImplemented", "TotalBug"] + tests)
+        writer.writerow([totalOk, totalNotImplemented, totalBug] + labels)
