@@ -17,16 +17,26 @@ def antl_command(path):
 
     os.chdir(currentDir)
 
-def test_command(path):
-    cmd = ["python2", "test.py", "-q"]
-
+def test_command(path, flog):
     try:
-        subprocess.check_call("FAST=1 PYTHONPATH='%s' python2 test.py -q" % path, shell=True)
+        (stdout, stderr) = subprocess.Popen("FAST=10 PYTHONPATH='%s' python2 test.py -q" % path,
+                                            stdout=subprocess.PIPE,
+                                            stderr=subprocess.PIPE,
+                                            shell=True).communicate()
+
+        flog.write(stdout)
+        flog.write(stderr)
+
+        errors = list(filter(lambda x: 'Error:' in x, stderr.decode('utf8').split('\n')))
+        errors.sort()
+        for i in errors:
+            if not i.startswith('AssertionError'):
+                print('\t', i)
+
         return True
     except subprocess.CalledProcessError:
         return False
 
-    
 correction_path = os.path.realpath(sys.argv[1])
 
 g4s = glob.glob(os.path.join(correction_path, "**/Mu.g4"), recursive=True)
@@ -35,7 +45,7 @@ print(len(g4s))
 
 generateG4 = False
 
-with open("allResult.csv", "w") as fResult:
+with open("allResult.csv", "w") as fResult, open('logs', 'wb') as flog:
     headerOk = False
     for g4 in g4s:
         dir = os.path.dirname(g4)
@@ -46,7 +56,7 @@ with open("allResult.csv", "w") as fResult:
         if  generateG4:
             antl_command(g4)
         else:
-            worked = test_command(dir)
+            worked = test_command(dir, flog)
 
             if worked:
                 # copy partial result to the big file

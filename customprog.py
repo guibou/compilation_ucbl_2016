@@ -136,8 +136,8 @@ class CustomProg:
         pass
 
     def _isRegister(self, reg):
-        return (isString(reg) and
-                reg.startswith("temp_") and reg[5:].isdigit())
+        return (isString(reg))# and
+                #reg.startswith("temp_") and reg[5:].isdigit())
 
     def _isRightSizedInt(self, i):
         return -15 <= i <= 15

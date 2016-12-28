@@ -1,3 +1,12 @@
+#coding: utf8
+'''
+- expr (num)
+- expr (bool)
+- assign
+- if
+- while
+- if imbriqué
+'''
 from __future__ import print_function
 
 import unittest
@@ -76,6 +85,9 @@ class TestCase(unittest.TestCase):
     def test_complex_expr(self):
         self._testIn('''x = 5 + 3 - 10;''', -2)
         self._testIn('''x = -3 + 10;''', 7)
+
+    def test_par_expr(self):
+        self._testIn('''x = (2 + 2);''', 4)
 
     def test_sub_expr(self):
         self._testIn('''x = 5 - (3 - 10);''', 12)
@@ -189,22 +201,22 @@ class TestCase(unittest.TestCase):
         self._test_simple_if(lambda x, y: x != y, "!=")
 
     def test_if_lt_var(self):
-        self._test_simple_if(lambda x, y: x < y, "<")
+        self._test_simple_if_var(lambda x, y: x < y, "<")
 
     def test_if_gt_var(self):
-        self._test_simple_if(lambda x, y: x > y, ">")
+        self._test_simple_if_var(lambda x, y: x > y, ">")
 
     def test_if_leq_var(self):
-        self._test_simple_if(lambda x, y: x <= y, "<=")
+        self._test_simple_if_var(lambda x, y: x <= y, "<=")
 
     def test_if_geq_var(self):
-        self._test_simple_if(lambda x, y: x >= y, ">=")
+        self._test_simple_if_var(lambda x, y: x >= y, ">=")
 
     def test_if_eq_var(self):
-        self._test_simple_if(lambda x, y: x == y, "==")
+        self._test_simple_if_var(lambda x, y: x == y, "==")
 
     def test_if_neq_var(self):
-        self._test_simple_if(lambda x, y: x != y, "!=")
+        self._test_simple_if_var(lambda x, y: x != y, "!=")
 
     def test_if_bool(self):
         self._testIn('''
@@ -299,22 +311,22 @@ class TestCase(unittest.TestCase):
         self._test_simple_if_else(lambda x, y: x != y, "!=")
 
     def test_if_else_lt_var(self):
-        self._test_simple_if_else(lambda x, y: x < y, "<")
+        self._test_simple_if_else_var(lambda x, y: x < y, "<")
 
     def test_if_else_gt_var(self):
-        self._test_simple_if_else(lambda x, y: x > y, ">")
+        self._test_simple_if_else_var(lambda x, y: x > y, ">")
 
     def test_if_else_leq_var(self):
-        self._test_simple_if_else(lambda x, y: x <= y, "<=")
+        self._test_simple_if_else_var(lambda x, y: x <= y, "<=")
 
     def test_if_else_geq_var(self):
-        self._test_simple_if_else(lambda x, y: x >= y, ">=")
+        self._test_simple_if_else_var(lambda x, y: x >= y, ">=")
 
     def test_if_else_eq_var(self):
-        self._test_simple_if_else(lambda x, y: x == y, "==")
+        self._test_simple_if_else_var(lambda x, y: x == y, "==")
 
     def test_if_else_neq_var(self):
-        self._test_simple_if_else(lambda x, y: x != y, "!=")
+        self._test_simple_if_else_var(lambda x, y: x != y, "!=")
 
     # if chain without else
     def _test_simple_if_chain(self, op, strop):
@@ -346,7 +358,7 @@ class TestCase(unittest.TestCase):
             b = b + 5;
             '''.format(i=i, op=strop, j=j, k=k), expectedValue)
 
-    def _test_simple_if_chain(self, op, strop):
+    def _test_simple_if_chain_var(self, op, strop):
         for i, j, k in rangeGroup([(0, 8), (4, 10), (6, 12)]):
             b = 5
             if op(i, j):
@@ -398,22 +410,22 @@ class TestCase(unittest.TestCase):
         self._test_simple_if_chain(lambda x, y: x != y, "!=")
 
     def test_if_chain_lt_var(self):
-        self._test_simple_if_chain(lambda x, y: x < y, "<")
+        self._test_simple_if_chain_var(lambda x, y: x < y, "<")
 
     def test_if_chain_gt_var(self):
-        self._test_simple_if_chain(lambda x, y: x > y, ">")
+        self._test_simple_if_chain_var(lambda x, y: x > y, ">")
 
     def test_if_chain_leq_var(self):
-        self._test_simple_if_chain(lambda x, y: x <= y, "<=")
+        self._test_simple_if_chain_var(lambda x, y: x <= y, "<=")
 
     def test_if_chain_geq_var(self):
-        self._test_simple_if_chain(lambda x, y: x >= y, ">=")
+        self._test_simple_if_chain_var(lambda x, y: x >= y, ">=")
 
     def test_if_chain_eq_var(self):
-        self._test_simple_if_chain(lambda x, y: x == y, "==")
+        self._test_simple_if_chain_var(lambda x, y: x == y, "==")
 
     def test_if_chain_neq_var(self):
-        self._test_simple_if_chain(lambda x, y: x != y, "!=")
+        self._test_simple_if_chain_var(lambda x, y: x != y, "!=")
 
     # if chain with else
     def _test_simple_if_chain_else(self, op, strop):
@@ -508,22 +520,22 @@ class TestCase(unittest.TestCase):
         self._test_simple_if_chain_else(lambda x, y: x != y, "!=")
 
     def test_if_chain_else_lt_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x < y, "<")
+        self._test_simple_if_chain_else_var(lambda x, y: x < y, "<")
 
     def test_if_chain_else_gt_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x > y, ">")
+        self._test_simple_if_chain_else_var(lambda x, y: x > y, ">")
 
     def test_if_chain_else_leq_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x <= y, "<=")
+        self._test_simple_if_chain_else_var(lambda x, y: x <= y, "<=")
 
     def test_if_chain_else_geq_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x >= y, ">=")
+        self._test_simple_if_chain_else_var(lambda x, y: x >= y, ">=")
 
     def test_if_chain_else_eq_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x == y, "==")
+        self._test_simple_if_chain_else_var(lambda x, y: x == y, "==")
 
     def test_if_chain_else_neq_var(self):
-        self._test_simple_if_chain_else(lambda x, y: x != y, "!=")
+        self._test_simple_if_chain_else_var(lambda x, y: x != y, "!=")
 
     def _test_simple_while(self, op, strop):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
@@ -579,22 +591,22 @@ class TestCase(unittest.TestCase):
         self._test_simple_while(lambda x, y: x != y, "!=")
 
     def test_while_lt_var(self):
-        self._test_simple_while(lambda x, y: x < y, "<")
+        self._test_simple_while_var(lambda x, y: x < y, "<")
 
     def test_while_gt_var(self):
-        self._test_simple_while(lambda x, y: x > y, ">")
+        self._test_simple_while_var(lambda x, y: x > y, ">")
 
     def test_while_leq_var(self):
-        self._test_simple_while(lambda x, y: x <= y, "<=")
+        self._test_simple_while_var(lambda x, y: x <= y, "<=")
 
     def test_while_geq_var(self):
-        self._test_simple_while(lambda x, y: x >= y, ">=")
+        self._test_simple_while_var(lambda x, y: x >= y, ">=")
 
     def test_while_eq_var(self):
-        self._test_simple_while(lambda x, y: x == y, "==")
+        self._test_simple_while_var(lambda x, y: x == y, "==")
 
     def test_while_neq_var(self):
-        self._test_simple_while(lambda x, y: x != y, "!=")
+        self._test_simple_while_var(lambda x, y: x != y, "!=")
 
     def test_and_binary(self):
         for i, j in rangeGroup([(0, maxValue), (0, maxValue)]):
@@ -779,6 +791,170 @@ class TestCase(unittest.TestCase):
 
         self._testIn(code, 5040)
 
+categories = {
+    'atom': [
+        'test_constant'
+    ],
+    'additiveExpr': [
+        'test_add',
+        'test_sub',
+        'test_non_mutable_add',
+        'test_non_mutable_sub',
+    ],
+    'unaryMinusExpr': [
+        'test_unaryminus',
+    ],
+    'notExpr (Binary)': [
+        'test_not_binary',
+    ],
+    'notExpr (Boolean)': [
+        'test_not_boolean',
+    ],
+    '_complexExpr': [
+        'test_complex_expr',
+        'test_sub_expr',
+    ],
+    'parExpr': [
+        'test_par_expr',
+    ],
+    'assignStat': [
+        'test_affectation',
+        'test_run_affectation_sub',
+        'test_run_affectation_add',
+        'test_run_affectation_div',
+        'test_run_affectation_lt',
+        'test_run_affectation_gt',
+        'test_run_affectation_lte',
+        'test_run_affectation_gte',
+        'test_run_affectation_eq',
+        'test_run_affectation_neq',
+        'test_run_affectation_not_binary',
+        'test_run_affectation_not_boolean',
+        'test_run_affectation_and_binary',
+        'test_run_affectation_or_binary',
+        'test_run_affectation_and_bool',
+        'test_run_affectation_or_bool',
+    ],
+    'relationalExpr': [
+        'test_run_affectation_lt',
+        'test_run_affectation_gt',
+        'test_run_affectation_lte',
+        'test_run_affectation_gte',
+        'test_non_mutable_lt',
+        'test_non_mutable_gt',
+        'test_non_mutable_lte',
+        'test_non_mutable_gte',
+    ],
+    'equalityExpr': [
+        'test_run_affectation_eq',
+        'test_run_affectation_neq',
+        'test_non_mutable_eq',
+        'test_non_mutable_neq',
+    ],
+    'andExpr': [
+        'test_run_affectation_and_binary',
+        'test_run_affectation_and_bool',
+        'test_and_binary',
+        'test_and_boolean',
+        'test_non_mutable_and_binary',
+    ],
+    'orExpr': [
+        'test_run_affectation_or_binary',
+        'test_run_affectation_or_bool',
+        'test_or_binary',
+        'test_or_boolean',
+        'test_non_mutable_or_binary',
+    ],
+    'ifStat (Simple)': [
+        'test_if_lt',
+        'test_if_gt',
+        'test_if_geq',
+        'test_if_neq',
+        'test_if_lt_var',
+        'test_if_gt_var',
+        'test_if_leq_var',
+        'test_if_geq_var',
+        'test_if_eq_var',
+        'test_if_neq_var',
+    ],
+
+    'ifStat (Else)': [
+        'test_if_bool',
+        'test_if_else_lt',
+        'test_if_else_gt',
+        'test_if_else_leq',
+        'test_if_else_geq',
+        'test_if_else_eq',
+        'test_if_else_neq',
+        'test_if_else_lt_var',
+        'test_if_else_gt_var',
+        'test_if_else_leq_var',
+        'test_if_else_geq_var',
+        'test_if_else_eq_var',
+        'test_if_else_neq_var',
+    ],
+    'ifStat (elif chain)': [
+        'test_if_chain_lt',
+        'test_if_chain_gt',
+        'test_if_chain_leq',
+        'test_if_chain_geq',
+        'test_if_chain_eq',
+        'test_if_chain_neq',
+        'test_if_chain_lt_var',
+        'test_if_chain_gt_var',
+        'test_if_chain_leq_var',
+        'test_if_chain_geq_var',
+        'test_if_chain_eq_var',
+        'test_if_chain_neq_var',
+    ],
+
+    'ifStat (elif chain + else)': [
+        'test_if_chain_else_lt',
+        'test_if_chain_else_gt',
+        'test_if_chain_else_leq',
+        'test_if_chain_else_geq',
+        'test_if_chain_else_eq',
+        'test_if_chain_else_neq',
+        'test_if_chain_else_lt_var',
+        'test_if_chain_else_gt_var',
+        'test_if_chain_else_leq_var',
+        'test_if_chain_else_geq_var',
+        'test_if_chain_else_eq_var',
+        'test_if_chain_else_neq_var',
+    ],
+    'whileStat': [
+        'test_while_bool',
+        'test_while_lt',
+        'test_while_gt',
+        'test_while_leq',
+        'test_while_geq',
+        'test_while_eq',
+        'test_while_neq',
+        'test_while_lt_var',
+        'test_while_gt_var',
+        'test_while_leq_var',
+        'test_while_geq_var',
+        'test_while_eq_var',
+        'test_while_neq_var',
+    ],
+    'summary': [
+        'test_complex_program_factorial',
+        'test_complex_program_multiplication',
+    ],
+    'test_bonus': [
+        'test_run_affectation_mul',
+        'test_run_affectation_div',
+        'test_run_affectation_mod',
+        'test_bonus_mul',
+        'test_bonus_div',
+        'test_bonus_mod',
+        'test_bonus_pow',
+        'test_bonus_overflow',
+        'test_non_mutable_mul',
+        'test_non_mutable_div',
+        'test_non_mutable_mod',
+    ]
+}
 if __name__ == '__main__':
     import csv
 
@@ -798,24 +974,50 @@ if __name__ == '__main__':
     with open('result.csv', 'w') as f:
         writer = csv.writer(f)
 
-        labels = []
-        totalOk = 0
-        totalNotImplemented = 0
-        totalBug = 0
-        for test in tests:
-            label = ''
-            if test in errTests:
-                if errTests[test]:
-                    totalNotImplemented += 1
-                    label = "Not Implemented"
+        def testResults():
+            labels = []
+            totalOk = 0
+            totalNotImplemented = 0
+            totalBug = 0
+            for test in tests:
+                label = ''
+                if test in errTests:
+                    if errTests[test]:
+                        totalNotImplemented += 1
+                        label = "Not Implemented"
+                    else:
+                        totalBug += 1
+                        label = "Bug"
                 else:
-                    totalBug += 1
-                    label = "Bug"
-            else:
-                totalOk += 1
-                label = "Ok"
+                    totalOk += 1
+                    label = "Ok"
 
-            labels.append(label)
+                labels.append(label)
 
-        writer.writerow(["TotalOk", "TotalNotImplemented", "TotalBug"] + tests)
-        writer.writerow([totalOk, totalNotImplemented, totalBug] + labels)
+            return labels, totalOk, totalNotImplemented, totalBug
+
+        labels, totalOk, totalNotImplemented, totalBug = testResults()
+
+        def computeCategories():
+            catLabels = []
+            catValues = []
+            for catlabel, cattests in categories.items():
+                catLabels.append(catlabel)
+
+                nbTests = 0
+                nbOk = 0
+                for t in cattests:
+                    assert t in dir(TestCase), t
+                    nbTests += 1
+                    if t not in errTests:
+                        nbOk += 1
+                catValue = "%s / %s" % (nbOk, nbTests)
+                catValues.append(catValue)
+
+            return catLabels, catValues
+
+        catLabels, catValues = computeCategories()
+
+        writer.writerow(["TotalOk", "TotalNotImplemented", "TotalBug", ""] + catLabels + [""] + tests)
+        writer.writerow(["%d / %d" % (totalOk, len(tests)), totalNotImplemented, totalBug, ""] + catValues + [""] + labels)
+

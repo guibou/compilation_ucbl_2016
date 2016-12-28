@@ -28,6 +28,12 @@ def run(inputname, debug=False):
     # Codegen Visitor, first argument is debug mode
     visitor3 = MyMuCodeGenVisitor(True, output_name, parser)
 
+    def nop(self):
+        pass
+
+    # another hack to remove some error due to unimplemented stuffs
+    MyMuCodeGenVisitor.printRegisterMap = nop
+
     # mock the visitor
     prog = CustomProg()
     visitor3._prog = prog
